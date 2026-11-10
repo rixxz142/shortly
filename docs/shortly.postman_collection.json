@@ -1,0 +1,89 @@
+{
+  "info": {
+    "name": "Shortly API",
+    "description": "Endpoint tests for Shortly running on Docker Compose (localhost).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8090" },
+    { "key": "linkId", "value": "" },
+    { "key": "shortCode", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Health check",
+      "request": { "method": "GET", "url": "{{baseUrl}}/health" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('200 OK', () => pm.response.to.have.status(200));",
+        "pm.test('database up', () => pm.expect(pm.response.json().database).to.eql('up'));"
+      ] } }]
+    },
+    {
+      "name": "2. Create short URL",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"original_url\": \"https://github.com/\"\n}", "options": { "raw": { "language": "json" } } },
+        "url": "{{baseUrl}}/api/urls"
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('201 Created', () => pm.response.to.have.status(201));",
+        "pm.test('Location header', () => pm.response.to.have.header('Location'));",
+        "const body = pm.response.json();",
+        "pm.collectionVariables.set('linkId', body.id);",
+        "pm.collectionVariables.set('shortCode', body.short_code);"
+      ] } }]
+    },
+    {
+      "name": "3. Create with invalid URL (400)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"original_url\": \"javascript:alert(1)\"\n}", "options": { "raw": { "language": "json" } } },
+        "url": "{{baseUrl}}/api/urls"
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('400 Bad Request', () => pm.response.to.have.status(400));"
+      ] } }]
+    },
+    {
+      "name": "4. List URLs",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/urls" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('200 OK', () => pm.response.to.have.status(200));",
+        "pm.test('contains new link', () => pm.expect(pm.response.json().map(l => l.id)).to.include(Number(pm.collectionVariables.get('linkId'))));"
+      ] } }]
+    },
+    {
+      "name": "5. Redirect (302)",
+      "protocolProfileBehavior": { "followRedirects": false },
+      "request": { "method": "GET", "url": "{{baseUrl}}/{{shortCode}}" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('302 Found', () => pm.response.to.have.status(302));",
+        "pm.test('Location is original URL', () => pm.expect(pm.response.headers.get('Location')).to.eql('https://github.com/'));"
+      ] } }]
+    },
+    {
+      "name": "6. Stats",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/urls/stats" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('200 OK', () => pm.response.to.have.status(200));"
+      ] } }]
+    },
+    {
+      "name": "7. Delete URL (204)",
+      "request": { "method": "DELETE", "url": "{{baseUrl}}/api/urls/{{linkId}}" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('204 No Content', () => pm.response.to.have.status(204));"
+      ] } }]
+    },
+    {
+      "name": "8. Unknown short code (404)",
+      "protocolProfileBehavior": { "followRedirects": false },
+      "request": { "method": "GET", "url": "{{baseUrl}}/{{shortCode}}" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('404 after delete', () => pm.response.to.have.status(404));"
+      ] } }]
+    }
+  ]
+}
