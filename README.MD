@@ -40,24 +40,7 @@ I chose it because it is small enough to finish, yet it touches everything a bac
 
 ## Architecture
 
-```text
- Browser
-    │  http://localhost:8090
-    ▼
-┌───────────────────────── network: shortly_net (bridge) ─────────────────────────┐
-│                                                                                 │
-│  ┌──────────────┐   /api/*, /health, /<code>   ┌──────────────┐   SQL :5432   ┌────────────────┐
-│  │ web          │ ───────────────────────────▶ │ api          │ ────────────▶ │ db             │
-│  │ Nginx :80    │                              │ Express :3000│               │ PostgreSQL     │
-│  │ React static │                              │              │               │ :5432          │
-│  └──────────────┘                              └──────────────┘               └───────┬────────┘
-│   host 8090 → 80                                host 127.0.0.1:3000 → 3000             │
-│                                                                                volume: db_data
-│  ┌──────────────┐  (profile: tools)                                                    │
-│  │ adminer :8080│ ── host 127.0.0.1:8091 ──────────────────────────────────────────────┘
-│  └──────────────┘
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+![Shortly architecture](docs/arsitektur.png)
 
 - **web** serves the built React files. Nginx proxies `/api/*`, `/health` and any short code `/<code>` to `api:3000`, so the browser only talks to one origin.
 - **api** validates input, generates codes, records clicks and talks to PostgreSQL by its service name `db` (never `localhost` or an IP).
