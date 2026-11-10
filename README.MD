@@ -4,13 +4,10 @@
 
 Shortly is a minimalist URL shortener: paste a long URL, get a short link, share it, and see how many times it was clicked. It is a three-tier application (React frontend, Express API, PostgreSQL) that runs entirely in Docker containers on localhost with one command.
 
-Built for the Mid Exam of **COMP6991031 – Cloud Services** (BINUS University, 2026/2027).
-
 | | |
 |---|---|
-| GitHub | `<repository-url>` |
-| Article | `<article-url>` |
-| YouTube demo | `<video-url>` |
+| Article | `https://medium.com/@rrizqianugrah/building-shortly-a-dockerized-three-tier-url-shortener-0126d69954a0?postPublishedType=initial` |
+| YouTube demo | `https://www.youtube.com/watch?v=SCJRvQ0ycFg` |
 
 ## Why this project
 
