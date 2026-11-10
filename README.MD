@@ -181,17 +181,5 @@ Put screenshots in `docs/screenshots/` and reference them here:
 
 Open-source libraries: React, Vite, Tailwind CSS, Lucide, Express, node-postgres, Helmet, express-rate-limit, PostgreSQL, Nginx, Adminer. The project layout follows my earlier course project (Library Admin).
 
-## AI Usage Declaration
-
-AI use type for this exam: **Partial** (max 50% of the work).
-
-| Item | Details |
-|---|---|
-| Tool | Claude (Anthropic) via Claude Code |
-| Parts assisted | Scaffolding of the backend/frontend files following my existing project structure, Dockerfile and compose.yml drafts, README and report draft |
-| My own work | Project idea, concept and technology choices, UI direction, running and testing the containers, screenshots, video, article, and understanding/explaining every line of the Dockerfiles and compose.yml |
-| Example prompt | "Build the app described in my README.md following the exam PDF, with the same code structure as my Library Admin project, and draft the Word report." |
-
----
 
 **Shortly** — Make every link count.
